@@ -1,0 +1,39 @@
+name: Gunluk Qizil Qiymeti (CBAR)
+
+on:
+  schedule:
+    # Hər gün Bakı vaxtı ilə təxminən 12:00-da işləyəcək (UTC 08:00)
+    - cron: '0 8 * * *'
+  workflow_dispatch: # İstənilən vaxt əl ilə işə salmaq üçün düymə
+
+permissions:
+  contents: write # Repozitoriyaya yazmaq icazəsi veririk
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodları yüklə (Checkout)
+        uses: actions/checkout@v3
+
+      - name: Python-u hazırla
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Kitabxanaları yüklə
+        run: |
+          pip install -r requirements.txt
+
+      - name: Skripti işlət
+        run: python main.py
+
+      - name: Dəyişiklikləri yadda saxla (Commit & Push)
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add CBAR_Gold_Rates.xlsx
+          # Əgər dəyişiklik varsa commit et, yoxdursa xəta vermə
+          git commit -m "Excel yeniləndi: $(date +'%Y-%m-%d')" || exit 0
+          git push
