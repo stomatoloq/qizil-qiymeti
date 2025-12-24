@@ -11,16 +11,28 @@ START_DATE_DEFAULT = date(2024, 1, 1)
 def get_gold_rate(query_date):
     date_str = query_date.strftime("%d.%m.%Y")
     url = f"https://www.cbar.az/currencies/{date_str}.xml"
+    
+    # Brauzer kimi görünmək üçün başlıq (Header) əlavə edirik
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
     try:
-        response = requests.get(url, timeout=10)
+        # headers parametrini bura əlavə edirik
+        response = requests.get(url, headers=headers, timeout=10)
+        
         if response.status_code == 200:
             root = ET.fromstring(response.content)
             xau_node = root.find(".//Valute[@Code='XAU']")
             if xau_node is not None:
                 val = xau_node.find('Value').text
                 return float(val.replace(',', '.'))
+        else:
+            print(f"Server xətası ({date_str}): Status Code {response.status_code}")
+            
     except Exception as e:
         print(f"Xəta ({date_str}): {e}")
+    
     return None
 
 def main():
@@ -71,4 +83,5 @@ def main():
         print("Yeni məlumat yoxdur.")
 
 if __name__ == "__main__":
+
     main()
