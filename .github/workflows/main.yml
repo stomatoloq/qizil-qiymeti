@@ -2,8 +2,8 @@ name: Gunluk Qizil Qiymeti (CBAR)
 
 on:
   schedule:
-    # Hər gün Bakı vaxtı ilə təxminən 12:00-da işləyəcək (UTC 08:00)
-    - cron: '0 8 * * *'
+    # Bakı vaxtı ilə 14:15-də işlə (UTC 10:15)
+    - cron: '15 10 * * *'
   workflow_dispatch: # İstənilən vaxt əl ilə işə salmaq üçün düymə
 
 permissions:
